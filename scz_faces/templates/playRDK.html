@@ -47,6 +47,10 @@ function make_trials(combos)
 	return trials; 
 }
 
+function argMax(arr) {
+  return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+}
+
 function make_trial_from_triplet(triplet)
 {
     
@@ -54,7 +58,7 @@ function make_trial_from_triplet(triplet)
     	type: "RDK", 
     	choices:[1,2,3], //labels for the buttons
     	coherence: triplet,
-    	
+    	correct_choice: argMax(triplet) + 1,
     	number_of_apertures: 3, //This needs to be set if more than one aperture
     	trial_duration: 10000,
     	RDK_type: 3,
