@@ -17,95 +17,96 @@
     </body>
     <script>
     
-var timeliner=[]; //holds all the trials for this part of the experiment 
+		var timeliner=[]; //holds all the trials for this part of the experiment 
 
 
-var target_coherence = [0.64, 0.72, 0.80, 0.88, 0.96]; //targets are the ones with highest coherence.
-//coherence means the dots are moving in the same direction. these are percentages. they each differ by 8 
-var nontarget_coherence = [0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.56];
+		var target_coherence = [0.64, 0.72, 0.80, 0.88, 0.96]; //targets are the ones with highest coherence.
+		//coherence means the dots are moving in the same direction. these are percentages. they each differ by 8 
+		var nontarget_coherence = [0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.56];
 
-var combos=make_all_combos(target_coherence, nontarget_coherence); 
+		var combos=make_all_combos(target_coherence, nontarget_coherence); 
 
-blocks=[];     
+		blocks=[];     
 
-var alltrials=make_trials(combos);
+		var alltrials=make_trials(combos);
 
-console.log('alltrials'); 
-console.log(alltrials); 
+		console.log('alltrials'); 
+		console.log(alltrials); 
 
-timeliner=timeliner.concat(alltrials); 
-console.log('timeline'); 
-console.log(timeliner);
+		timeliner=timeliner.concat(alltrials); 
+		console.log('timeline'); 
+		console.log(timeliner);
 
-function make_trials(combos)
-{
-	trials=[];
-	for(var i=0; i<combos.length; i++)
-	{
-		trials=trials.concat(make_trial_from_triplet(combos[i]));  
-	}
-	return trials; 
-}
-
-function argMax(arr) {
-  return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
-}
-
-function make_trial_from_triplet(triplet)
-{
-    
-	return{ //this is how u create a trial type 
-    	type: "RDK", 
-    	choices:[1,2,3], //labels for the buttons
-    	coherence: triplet,
-    	correct_choice: argMax(triplet) + 1,
-    	number_of_apertures: 3, //This needs to be set if more than one aperture
-    	trial_duration: 10000,
-    	RDK_type: 3,
-    	aperture_width: 200, //Applied to all apertures if only one value
-    	number_of_dots: 300, //Different parameter for each aperture
-    	aperture_center_x: [(window.innerWidth/2)-300,window.innerWidth/2,(window.innerWidth/2)+300] //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
-		}; 
-}
-
-
-  //this function takes the targets and nontargets and makes all possible combos of 2 targets and one nontarget 
-function make_all_combos(targets, nontargets) //make all combos doesn't work with phase 2 script, so fix that. 
-{
-
-	
-	var result=[]; 
-	var pairs=[]; 
-	for (var i=0; i<targets.length-1; i++)
-	{	
-	  for(var j=i+1;j<targets.length; j++)
-	  {
-		var mini=[]; 
-		mini.push(targets[i]); 
-		mini.push(targets[j]); 
-		pairs.push(mini); 
-	  }
-	}
-
-	
-	for(var i=0; i<pairs.length; i++)
-	{
-		var a=pairs[i][0];
-		var b=pairs[i][1];
-	
-		for(var j=0; j<nontargets.length; j++)
+		function make_trials(combos)
 		{
-			var c=nontargets[j]; 
-			var mini2=[];  
-			mini2.push(a); 
-			mini2.push(b); 
-			mini2.push(c);
-			mini2=jsPsych.randomization.repeat(mini2, 1); 
-			result.push(mini2); 
+			trials=[];
+			for(var i=0; i<combos.length; i++)
+			{
+				trials=trials.concat(make_trial_from_triplet(combos[i]));  
+			}
+			return trials; 
 		}
-	}
-	return result;  
-} 
+
+		function argMax(arr) {
+		return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+		}
+
+		function make_trial_from_triplet(triplet)
+		{
+			
+			return{ //this is how u create a trial type 
+				type: "RDK", 
+				choices:[0,1,2], //labels for the buttons
+				coherence: triplet,
+				correct_choice: argMax(triplet),
+				number_of_apertures: 3, //This needs to be set if more than one aperture
+				trial_duration: 10000,
+				RDK_type: 3,
+				aperture_width: 200, //Applied to all apertures if only one value
+				number_of_dots: 300, //Different parameter for each aperture
+				aperture_center_x: [(window.innerWidth/2)-300,window.innerWidth/2,(window.innerWidth/2)+300] //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+			}; 
+		}
+
+
+		//this function takes the targets and nontargets and makes all possible combos of 2 targets and one nontarget 
+		function make_all_combos(targets, nontargets) //make all combos doesn't work with phase 2 script, so fix that. 
+		{
+
+			
+			var result=[]; 
+			var pairs=[]; 
+			for (var i=0; i<targets.length-1; i++)
+			{	
+			for(var j=i+1;j<targets.length; j++)
+			{
+				var mini=[]; 
+				mini.push(targets[i]); 
+				mini.push(targets[j]); 
+				pairs.push(mini); 
+			}
+			}
+
+			
+			for(var i=0; i<pairs.length; i++)
+			{
+				var a=pairs[i][0];
+				var b=pairs[i][1];
+			
+				for(var j=0; j<nontargets.length; j++)
+				{
+					var c=nontargets[j]; 
+					var mini2=[];  
+					mini2.push(a); 
+					mini2.push(b); 
+					mini2.push(c);
+					mini2 = jsPsych.randomization.repeat(mini2, 1); 
+					result.push(mini2); 
+					return result; // remove line!!!
+				}
+			}
+			return result;  
+		} 
 
 //i dont remember what the following 2 are 
 
@@ -141,9 +142,10 @@ function make_all_combos(targets, nontargets) //make all combos doesn't work wit
 //            
 //           };//End of choiceTrial
     
+		var savingLocally = true; // modify later -- LEILAAAA
+		var displayData = true; // modify later -- LEILAAAA
     
-    
-     //Initiate the experiment
+     	// Initiate the experiment
         jsPsych.init({
           timeline: timeliner,//call all the trials 
           //the comments below are for later to save the data 

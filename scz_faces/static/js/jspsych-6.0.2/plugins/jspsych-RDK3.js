@@ -52,13 +52,13 @@ jsPsych.plugins["RDK"] = (function() {
 		      array: true,
 		      description: "The valid keys that the subject can press to indicate a response"
 		    },
-		    // correct_choice: {   //have to adapt this for the new code, haven't done that yet 
-// 		      type: jsPsych.plugins.parameterType.STRING,
-// 		      pretty_name: "Correct choice",
-// 		      default: undefined,
-// 		      array: true,
-// 		      description: "The correct keys for that trial"
-// 		    },
+		    correct_choice: {   //have to adapt this for the new code, haven't done that yet 
+		      type: jsPsych.plugins.parameterType.INT,
+		      pretty_name: "Correct choice",
+		      default: undefined,
+		      array: true,
+		      description: "The correct button number"
+		    },
 
 		    trial_duration: {
 		      type: jsPsych.plugins.parameterType.INT,
@@ -633,12 +633,12 @@ display_element.appendChild(button_display);
 				//Check if the correct_choice variable holds an array
 				if(trial.correct_choice.constructor === Array){ //If it is an array
 					trial.correct_choice = trial.correct_choice.map(function(x){return x.toUpperCase();}); //Convert all the values to upper case
-					return trial.correct_choice.includes(String.fromCharCode(response.key)); //If the response is included in the correct_choice array, return true. Else, return false.
+					return trial.correct_choice.includes(response.button); //If the response is included in the correct_choice array, return true. Else, return false.
 				}
 				//Else compare the char with the response key
 				else{
 					//Return true if the user's response matches the correct answer. Return false otherwise.
-					return response.key == trial.correct_choice.toUpperCase().charCodeAt(0);
+					return response.button == trial.correct_choice;
 				}
 			}
 		}
