@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--Change the title-->
+        <title>Across Tasks Experiment</title>
+        
+        <!--jsPsych necessities start-->
+        <script src="../static/js/jsPsych-6.0.2/jspsych.js"></script>
+        <link href="../static/js/jsPsych-6.0.2/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <!--jsPsych necessities end-->
+        
+        <!--jsPsych plugins start-->        
+        <!--jsPsych plugins end-->
+        
+          </head>
+    <body>
+    </body>
+    
+    
+    
+    <script>
+    
+       ///////////////////////////////////////////////////////////////
+        //-----------------Your code below this line-----------------//
+        
+ var female_stimuli = [
+  {stimuli: ['../static/female/AF01NES.JPG']},
+  {stimuli: ['../static/female/AF02NES.JPG']},
+  {stimuli: ['../static/female/AF03NES.JPG']},
+  {stimuli: ['../static/female/AF04NES.JPG']},
+  {stimuli: ['../static/female/AF05NES.JPG']},
+  {stimuli: ['../static/female/AF06NES.JPG']},
+  {stimuli: ['../static/female/AF07NES.JPG']},
+  {stimuli: ['../static/female/AF08NES.JPG']},
+  {stimuli: ['../static/female/AF09NES.JPG']},
+  {stimuli: ['../static/female/AF10NES.JPG']},
+  {stimuli: ['../static/female/AF11NES.JPG']},
+  {stimuli: ['../static/female/AF12NES.JPG']},
+  {stimuli: ['../static/female/AF13NES.JPG']},
+  {stimuli: ['../static/female/AF14NES.JPG']},
+  {stimuli: ['../static/female/AF15NES.JPG']},
+  ]
+
+var male_stimuli = [
+  {stimuli: ['../static/male/AM01NES.JPG']},
+  {stimuli: ['../static/male/AM02NES.JPG']},
+  {stimuli: ['../static/male/AM03NES.JPG']},
+  {stimuli: ['../static/male/AM04NES.JPG']},
+  {stimuli: ['../static/male/AM05NES.JPG']},
+  {stimuli: ['../static/male/AM06NES.JPG']},
+  {stimuli: ['../static/male/AM07NES.JPG']},
+  {stimuli: ['../static/male/AM08NES.JPG']},
+  {stimuli: ['../static/male/AM09NES.JPG']},
+  {stimuli: ['../static/male/AM10NES.JPG']},
+  {stimuli: ['../static/male/AM11NES.JPG']},
+  {stimuli: ['../static/male/AM12NES.JPG']},
+  {stimuli: ['../static/male/AM13NES.JPG']},
+  {stimuli: ['../static/male/AM14NES.JPG']},
+  {stimuli: ['../static/male/AM15NES.JPG']},
+];
+
+for(var i=0; i<female_stimuli.length;i++)
+{
+	female_stimuli.gender='female';
+	female_stimuli.facenumber=i;
+	male_stimuli.gender='male';
+	male_stimuli.facenumber=i; 
+}
+
+	
+	

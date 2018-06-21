@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--Change the title-->
+        <title>PLAY RDK</title> <!--RDK means random dot kinematogram-->
+        
+        <!--jsPsych necessities start-->
+        <script src="../static/js/jsPsych-6.0.2/jspsych.js"></script>
+        <link href="../static/js/jsPsych-6.0.2/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <!--jsPsych necessities end-->
+        
+         <!--jsPsych plugins start-->
+        <script src="../static/js/jsPsych-6.0.2/plugins/jspsych-RDK3.js"></script>
+        
+          </head>
+    <body>
+    </body>
+    <script>
+    
+var timeliner=[]; //holds all the trials for this part of the experiment 
+
+
+var target_coherence = [64, 72, 80, 88, 96]; //targets are the ones with highest coherence.
+//coherence means the dots are moving in the same direction. these are percentages. they each differ by 8 
+var nontarget_coherence = [8, 16, 24, 32, 40, 48, 56];
+
+var combos=make_all_combos(target_coherence, nontarget_coherence); 
+
+blocks=[];     
+
+var alltrials=make_trials(combos);
+
+console.log('alltrials'); 
+console.log(alltrials); 
+
+timeliner=timeliner.concat(alltrials); 
+console.log('timeline'); 
+console.log(timeliner);
+
+function make_trials(combos)
+{
+	trials=[];
+	for(var i=0; i<combos.length; i++)
+	{
+		trials=trials.concat(make_trial_from_triplet(combos[i]));  
+	}
+	return trials; 
+}
+
+function make_trial_from_triplet(triplet)
+{
+    
+	return{ //this is how u create a trial type 
+    	type: "RDK", 
+    	choices:[1,2,3], //labels for the buttons
+    	coherence: triplet,
+    	
+    	number_of_apertures: 3, //This needs to be set if more than one aperture
+    	trial_duration: 10000,
+    	RDK_type: 3,
+    	aperture_width: 200, //Applied to all apertures if only one value
+    	number_of_dots: 300, //Different parameter for each aperture
+    	aperture_center_x: [(window.innerWidth/2)-300,window.innerWidth/2,(window.innerWidth/2)+300] //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+		}; 
+}
+
+
+  //this function takes the targets and nontargets and makes all possible combos of 2 targets and one nontarget 
+function make_all_combos(targets, nontargets) //make all combos doesn't work with phase 2 script, so fix that. 
+{
+
+	
+	var result=[]; 
+	var pairs=[]; 
+	for (var i=0; i<targets.length-1; i++)
+	{	
+	  for(var j=i+1;j<targets.length; j++)
+	  {
+		var mini=[]; 
+		mini.push(targets[i]); 
+		mini.push(targets[j]); 
+		pairs.push(mini); 
+	  }
+	}
+
+	
+	for(var i=0; i<pairs.length; i++)
+	{
+		var a=pairs[i][0];
+		var b=pairs[i][1];
+	
+		for(var j=0; j<nontargets.length; j++)
+		{
+			var c=nontargets[j]; 
+			var mini2=[];  
+			mini2.push(a); 
+			mini2.push(b); 
+			mini2.push(c); 
+			result.push(mini2); 
+		}
+	}
+	return result;  
+} 
+
+//i dont remember what the following 2 are 
+
+// function makeImageHTML(path){
+//           
+//           //Get the width of the window
+//           var windowWidth = window.innerWidth;
+//           
+//           //Calculate the width of the image
+//           var imageWidth = windowWidth/4; //Scale it down so that all 3 can fit comfortably
+//           
+//           //Constrain the width if it is too large (for very wide screens)
+//           if(imageWidth > 450){
+//             imageWidth = 450;
+//           }
+//           
+//           //Return the image tag with the formatting
+//           return '<img src=' + path + ` style="width:${imageWidth}px; height:auto;">`;
+//         
+//         }//End of makeImageHTML
+
+
+
+
+  //   var choiceTrial = {
+//             type: 'html-button-response',
+//             stimulus: '',
+//             prompt: '<p> Which face is more attractive? </p>',
+//             choices: [1,2,3],
+//            //    makeImageHTML(face1.path),
+// //               makeImageHTML(face2.path)
+// //             ],
+//            
+//           };//End of choiceTrial
+    
+    
+    
+     //Initiate the experiment
+        jsPsych.init({
+          timeline: timeliner,//call all the trials 
+          //the comments below are for later to save the data 
+          on_finish: function(){ //Execute this when the experiment finishes
+            if(savingLocally){
+              jsPsych.data.get().localSave('csv','testSave.csv'); //Save the data locally in a .csv file
+            }
+            if(displayData){
+              jsPsych.data.displayData(); //Display the data onto the browser screen
+            }
+//             if(psiTurkIsOn){
+//               psiturk.saveData({ 
+//                 success: function(){
+//                   //Only submit the HIT if all phases are completed
+//                   if(allPhasesCompleted){
+//                     psiturk.completeHIT(); //Complete the HIT
+//                   }
+//                 }
+//               });
+//             }
+//           },
+//           on_trial_finish: function(){ //Execute this after every trial
+//             if (savingToDatabase){
+//               save_data(tableName, [jsPsych.data.get().last(1).values()[0]]);
+//             }
+           }
+        });
+
+    
+    </script>
+</html>

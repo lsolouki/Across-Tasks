@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--Change the title-->
+        <title>Across Tasks Experiment</title>
+        
+        <!--jsPsych necessities start-->
+        <script src="../static/js/jsPsych-6.0.2/jspsych.js"></script>
+        <link href="../static/js/jsPsych-6.0.2/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <!--jsPsych necessities end-->
+        
+        <!--jsPsych plugins start--> 
+        <script src="../static/js/jsPsych-6.0.2/plugins/jspsych-image-slider-response.js"></script>       
+        <!--jsPsych plugins end-->
+        
+          </head>
+    <body>
+    </body>
+    
+    
+    <script>
+    
+    
+    //so far only phase 1 coded here!!!
+    
+    //note: this rating scheme ain't working 
+    
+     //Data switches
+        var psiTurkIsOn = 0;   // 0: Test locally.  1: Test/Run on psiTurk
+        var savingLocally = 1; // 0: Nothing.       1: Download CSV file
+        var displayData = 0;   // 0: Nothing.       1: Display data on browser
+        var savingToDatabase = 0;//Should be 1 when psiturkIsOn
+        savingToDatabase = psiTurkIsOn ? 1 : savingToDatabase;//Safeguard to ensure that it saves to the database if psiturk is on
+        
+        var username = '';     // Username for psiturk server
+        var tableName = '';    // MySQL Table Name 
+        var folderName = '';   // Folder containing the experiment
+        
+        //Get the workerID, etc. if we are saving to Database
+        if(savingToDatabase){
+          var workerId = $_GET('workerId');
+          var assignmentId = $_GET('assignmentId');
+          var hitId = $_GET('hitId');
+          
+          console.log("workerId:");
+          console.log(workerId);
+          console.log("assignmentId:");
+          console.log(assignmentId);
+          console.log("hitId:");
+          console.log(hitId);
+        }
+        
+        
+        // Load psiturk
+        if (psiTurkIsOn){
+          var psiturk = new PsiTurk(uniqueId, adServerLoc, mode);
+        }
+        
+        
+       ///////////////////////////////////////////////////////////////
+        //-----------------Your code below this line-----------------//
+        
+        
+// upload the faces        
+ var female_stimuli = [
+  {stimuli: ['../static/images/female/AF01NES.JPG']},
+  {stimuli: ['../static/images/female/AF02NES.JPG']},
+  {stimuli: ['../static/images/female/AF03NES.JPG']},
+  {stimuli: ['../static/images/female/AF04NES.JPG']},
+  {stimuli: ['../static/images/female/AF05NES.JPG']},
+  {stimuli: ['../static/images/female/AF06NES.JPG']},
+  {stimuli: ['../static/images/female/AF07NES.JPG']},
+  {stimuli: ['../static/images/female/AF08NES.JPG']},
+  {stimuli: ['../static/images/female/AF09NES.JPG']},
+  {stimuli: ['../static/images/female/AF10NES.JPG']},
+  {stimuli: ['../static/images/female/AF11NES.JPG']},
+  {stimuli: ['../static/images/female/AF12NES.JPG']},
+	{stimuli: ['../static/images/female/AF13NES.JPG']},
+	 {stimuli: ['../static/images/female/AF14NES.JPG']},
+  {stimuli: ['../static/images/female/AF15NES.JPG']}
+  ]
+
+var male_stimuli = [
+  {stimuli: '../static/images/male/AM01NES.JPG'},
+  {stimuli: ['../static/images/male/AM02NES.JPG']},
+  {stimuli: ['../static/images/male/AM03NES.JPG']},
+  {stimuli: ['../static/images/male/AM04NES.JPG']},
+  {stimuli: ['../static/images/male/AM05NES.JPG']},
+  {stimuli: ['../static/images/male/AM06NES.JPG']},
+  {stimuli: ['../static/images/male/AM07NES.JPG']},
+  {stimuli: ['../static/images/male/AM08NES.JPG']},
+  {stimuli: ['../static/images/male/AM09NES.JPG']},
+  {stimuli: ['../static/images/male/AM10NES.JPG']},
+  {stimuli: ['../static/images/male/AM11NES.JPG']},
+  {stimuli: ['../static/images/male/AM12NES.JPG']},
+  {stimuli: ['../static/images/male/AM13NES.JPG']},
+  {stimuli: ['../static/images/male/AM14NES.JPG']},
+  {stimuli: ['../static/images/male/AM15NES.JPG']}
+];
+
+        
+//keep track of gender and face number 
+for(var i=0; i<female_stimuli.length;i++)
+{
+	female_stimuli.gender='female';
+	female_stimuli.facenumber=i;
+	male_stimuli.gender='male';
+	male_stimuli.facenumber=i; 
+}
+
+//create phase1
+var phase1=makePhase1();  
+//var phase2=makePhase2(); 
+
+var main_timeline = [];
+main_timeline.push(phase1); 
+
+
+
+
+
+ //Make a template trial object to rate the faces
+ function makePhase1(){
+          var Phase1Object = {
+            type: 'image-slider-response',
+            stimulus: '<p> Filler stimulus </p>',//Stimulus will be replaced by the image below
+            labels: ['Extremely unattractive', 'Extremely attractive'],
+            prompt: "How attractive is this person?<br/>",
+            button_label: 'Submit',
+            response_ends_trial: true,
+            on_finish: function(data){
+            	//Determine the gender of the face
+              	var gender = data.gender;
+              
+              	//Select the array based on the gender
+             	 if(gender === "male"){
+               		 var relevantArray = male_stimuli; //Assignment operator: Points to the same array, not a copy
+             	 }
+              	else if(gender === "female"){
+                	var relevantArray = female_stimuli; //Assignment operator: Points to the same array, not a copy
+             	 }
+              
+              //Look for the object in the relevant array
+              	for(var i in relevantArray){
+                
+                	//Load in the current object for easy handling
+                	var currentObject = relevantArray[i];
+            
+                
+                	//If the stimuli matches the path of the object, then we have the correct array
+                	if(data.stimuli === currentObject.stimuli){
+                  
+                  	//If the rating1 key is not defined, then add the response rating as the rating (as this is probably the first round of ratings)
+                 	 if(!("rating1" in currentObject)){
+                   	 	currentObject.rating1 = data.response;
+                   	 	console.log('rating1');
+                   	 	console.log(currentObject.rating); 
+                 	 }
+                  	//Else if the rating2 key is not defined, then we add the response as rating 2 and calculate the average
+                 	 else if ( !("rating2" in currentObject) ){
+                   		 currentObject.rating2 = data.response;
+                    //Calculate the average rating
+                    var averageRating = (currentObject.rating1 + currentObject.rating2)/2;
+                    //Add it into the currentObject
+                    currentObject.averageRating = averageRating;
+                  }//End of inner if
+                }//End of outer if
+              }//End of for loop
+              
+              //If the subject took longer than 1 second to answer, then set the flag to false
+              if(data.rt > 1000){
+                subjectAnsweredAllPhase1Below1Second = false;
+              }
+              
+            }//End of on_finish
+            
+            };//End of Phase1Object
+            
+            //i want to create an array with these objects: 
+            
+            Phase1Trials=[];
+            for(var i=0; i<female_stimuli.length; i++)
+            {
+          	  var NewPhase1Object1=Object.assign({},Phase1Object); 
+          		NewPhase1Object1.stimulus=female_stimuli[i].stimuli; 
+          	  //Phase1Object.stimulus=female_stimuli[i].stimuli;
+          	  //Phase1Object.data=
+          	  NewPhase1Object1.data=
+          	  {
+          	  	gender:'female',
+          	  	facenumber:i,
+          	  	stimuli:female_stimuli[i].stimuli
+          	  }
+          	  Phase1Trials.push(NewPhase1Object1);
+          	  
+          	  //insert male trial
+          	  
+          	  //Phase1Object.stimulus=male_stimuli[i].stimuli; 
+          	  var NewPhase1Object2=Object.assign({},Phase1Object); 
+          		 NewPhase1Object2.stimulus=male_stimuli[i].stimuli
+          	 	NewPhase1Object2.data=
+          	  {
+          	  	gender: 'male',
+          	  	facenumber:i,
+          	  	stimuli:male_stimuli[i].stimuli
+          	  }
+          	  Phase1Trials.push(NewPhase1Object2);
+          	  }//end of creating the trials array
+          	  
+          	   //Shuffle the array and save it as the first part
+          var phase1Part1 = jsPsych.randomization.shuffle(Phase1Trials);
+          
+          //Make a copy of the previous array, shuffle it, and save it as the second part
+          var phase1Part2 = jsPsych.randomization.shuffle(Phase1Trials.slice(0));
+          
+          //Concatenate the arrays to form the first phase
+          var phase1Array = phase1Part1.concat(phase1Part2);
+          
+          
+          //Shuffle the array and return it
+          return {
+            type: 'image-slider-response',
+            timeline: phase1Array
+          };//End of return
+        }//End of makePhase1
+          	  
+//           	
+// function makePhase2()
+// {
+// 	for(var i=0; i<female_stimuli.length; i++)
+// 	console.log(female_stimuli[i].averageRating); 
+// 
+// 
+// 
+// 
+// 
+// 
+// }
+          	
+          	
+
+        
+        //------psiTurk Functions Begin------
+
+jsPsych.init({
+  timeline: main_timeline,
+  
+ on_finish: function(){ //Execute this when the experiment finishes
+            if(savingLocally){
+              jsPsych.data.get().localSave('csv','testSave.csv'); //Save the data locally in a .csv file
+            }
+            if(displayData){
+              jsPsych.data.displayData(); //Display the data onto the browser screen
+            }
+            if(psiTurkIsOn){
+              psiturk.saveData({ 
+                success: function(){
+                  //Only submit the HIT if all phases are completed
+                  if(allPhasesCompleted){
+                    psiturk.completeHIT(); //Complete the HIT
+                  }
+                }
+              });
+            }
+          },
+          on_trial_finish: function(){ //Execute this after every trial
+            if (savingToDatabase){
+              save_data(tableName, [jsPsych.data.get().last(1).values()[0]]);
+            }
+          }
+        });
+
+
+</script>
+
+</script>
+</html>
