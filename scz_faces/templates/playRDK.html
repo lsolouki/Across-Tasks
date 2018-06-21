@@ -20,9 +20,9 @@
 var timeliner=[]; //holds all the trials for this part of the experiment 
 
 
-var target_coherence = [64, 72, 80, 88, 96]; //targets are the ones with highest coherence.
+var target_coherence = [0.64, 0.72, 0.80, 0.88, 0.96]; //targets are the ones with highest coherence.
 //coherence means the dots are moving in the same direction. these are percentages. they each differ by 8 
-var nontarget_coherence = [8, 16, 24, 32, 40, 48, 56];
+var nontarget_coherence = [0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.56];
 
 var combos=make_all_combos(target_coherence, nontarget_coherence); 
 
@@ -99,7 +99,8 @@ function make_all_combos(targets, nontargets) //make all combos doesn't work wit
 			var mini2=[];  
 			mini2.push(a); 
 			mini2.push(b); 
-			mini2.push(c); 
+			mini2.push(c);
+			mini2=jsPsych.randomization.repeat(mini2, 1); 
 			result.push(mini2); 
 		}
 	}
