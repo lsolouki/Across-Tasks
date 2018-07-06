@@ -470,6 +470,7 @@ jsPsych.plugins["RDK"] = (function() {
 		
 		//--------RDK variables and function calls end--------
 
+
 	// Added by Andre for canvas
     var start_time = Date.now();
 	display_element.querySelector('#jpsych-canvas').addEventListener('click', function(e){
@@ -1297,11 +1298,7 @@ jsPsych.plugins["RDK"] = (function() {
 					if ( (!timerHasStarted) && (trial.trial_duration > 0) ){
 						//If the trial duration is set, then set a timer to count down and call the end_trial function when the time is up
 						//(If the subject did not press a valid keyboard response within the trial duration, then this will end the trial)
-<<<<<<< HEAD
 						// timeoutID = window.setTimeout(end_trial,trial.trial_duration); //This timeoutID is then used to cancel the timeout should the subject press a valid key
-=======
-						//timeoutID = window.setTimeout(end_trial,trial.trial_duration); //This timeoutID is then used to cancel the timeout should the subject press a valid key
->>>>>>> f4e2f557cec9f56d241507ede324d2f964b50ab6
 						//The timer has started, so we set the variable to true so it does not start more timers
 						timerHasStarted = true;
 					}
