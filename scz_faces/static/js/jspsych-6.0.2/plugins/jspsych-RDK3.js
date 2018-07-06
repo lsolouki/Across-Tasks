@@ -470,67 +470,8 @@ jsPsych.plugins["RDK"] = (function() {
 		
 		//--------RDK variables and function calls end--------
 
-
-//---BUTTON PRESS VARIABLES BEGIN--// Leila added this part. copied this from the jspsych-html-button-response.js plugin 
-
-//display buttons
-	var html; 
-    var buttons = [];
-    if (Array.isArray(trial.button_html)) {
-      if (trial.button_html.length == trial.choices.length) {
-		buttons = trial.button_html;
-      } else {
-        console.error('Error in html-button-response plugin. The length of the button_html array does not equal the length of the choices array');
-      }
-    } else {
-      for (var i = 0; i < trial.choices.length; i++) {
-        buttons.push(trial.button_html);
-      }
-    }
-    html += '<div id="jspsych-html-button-response-btngroup">';
-    for (var i = 0; i < trial.choices.length; i++) {
-      var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-      
-      
-   //   html += '<div class="jspsych-html-button-response-button" style="position: absolute; display: block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+';" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
-	  html += '<div class="jspsych-html-button-response-button"  display: block;" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
-
-    }
-    html += '</div>';
-    
-    
-var button_display = document.createElement("button_display");
-display_element.appendChild(button_display); 
-  button_display.innerHTML = html;
-
-
-    for(var i=0; i<trial.choices.length; i++)
-    {
-    	var x=apertureCenterXArray[i]-(apertureWidthArray[i]/2); 
-      var y=apertureCenterYArray[i]-(apertureHeightArray[i]/2); 
-    //   document.getElementsByClassName('jspsych-html-button-response-button').style.position='relative'; 
-    	document.getElementById('jspsych-html-button-response-button-' + i).style.top=y; 
-    	document.getElementById('jspsych-html-button-response-button-' + i).style.left=x; 
-    
-    }
-
-
-
-
-
-
- // start time
-    var start_time = Date.now();
-// add event listeners to buttons
-    for (var i = 0; i < trial.choices.length; i++) {
-      display_element.querySelector('#jspsych-html-button-response-button-' + i).addEventListener('click', function(e){
-		var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
-		console.log(choice);
-        after_response(choice);
-      });
-	}
-	
 	// Added by Andre for canvas
+    var start_time = Date.now();
 	display_element.querySelector('#jpsych-canvas').addEventListener('click', function(e){
 		console.log(e);
 		for (var i = 0; i < trial.aperture_center_x.length; i++) {
