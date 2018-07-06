@@ -359,6 +359,7 @@ jsPsych.plugins["RDK"] = (function() {
 		
 		//Create a canvas element and append it to the DOM
 		var canvas = document.createElement("canvas");
+		canvas.setAttribute("id", "jpsych-canvas"); // Andre
 		display_element.appendChild(canvas); 
 		
 		
@@ -477,7 +478,7 @@ jsPsych.plugins["RDK"] = (function() {
     var buttons = [];
     if (Array.isArray(trial.button_html)) {
       if (trial.button_html.length == trial.choices.length) {
-        buttons = trial.button_html;
+		buttons = trial.button_html;
       } else {
         console.error('Error in html-button-response plugin. The length of the button_html array does not equal the length of the choices array');
       }
@@ -507,7 +508,7 @@ display_element.appendChild(button_display);
     {
     	var x=apertureCenterXArray[i]-(apertureWidthArray[i]/2); 
       var y=apertureCenterYArray[i]-(apertureHeightArray[i]/2); 
-      document.getElementsByClassName('jspsych-html-button-response-button').style.position='relative'; 
+    //   document.getElementsByClassName('jspsych-html-button-response-button').style.position='relative'; 
     	document.getElementById('jspsych-html-button-response-button-' + i).style.top=y; 
     	document.getElementById('jspsych-html-button-response-button-' + i).style.left=x; 
     
@@ -523,10 +524,23 @@ display_element.appendChild(button_display);
 // add event listeners to buttons
     for (var i = 0; i < trial.choices.length; i++) {
       display_element.querySelector('#jspsych-html-button-response-button-' + i).addEventListener('click', function(e){
-        var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
+		var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
+		console.log(choice);
         after_response(choice);
       });
-    }
+	}
+	
+	// Added by Andre for canvas
+	display_element.querySelector('#jpsych-canvas').addEventListener('click', function(e){
+		console.log(e);
+		for (var i = 0; i < trial.aperture_center_x.length; i++) {
+			if (Math.abs(trial.aperture_center_x[i] - e.layerX) < trial.aperture_width / 2 && Math.abs(trial.aperture_center_y - e.layerY) < trial.aperture_height / 2) {
+				let choice = i;
+				console.log(choice);
+				after_response(choice);
+			}
+		}
+	});
     
     
     
@@ -1342,7 +1356,7 @@ display_element.appendChild(button_display);
 					if ( (!timerHasStarted) && (trial.trial_duration > 0) ){
 						//If the trial duration is set, then set a timer to count down and call the end_trial function when the time is up
 						//(If the subject did not press a valid keyboard response within the trial duration, then this will end the trial)
-						timeoutID = window.setTimeout(end_trial,trial.trial_duration); //This timeoutID is then used to cancel the timeout should the subject press a valid key
+						// timeoutID = window.setTimeout(end_trial,trial.trial_duration); //This timeoutID is then used to cancel the timeout should the subject press a valid key
 						//The timer has started, so we set the variable to true so it does not start more timers
 						timerHasStarted = true;
 					}
