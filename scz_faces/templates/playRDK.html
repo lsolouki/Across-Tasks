@@ -58,6 +58,7 @@
 				type: "RDK", 
 				choices:[0,1,2], //labels for the buttons
 				coherence: triplet,
+				apertureType:1, 
 				correct_choice: argMax(triplet),
 				number_of_apertures: 3, //This needs to be set if more than one aperture
 				trial_duration: 10000,
@@ -148,6 +149,7 @@
      	// Initiate the experiment
         jsPsych.init({
           timeline: timeliner,//call all the trials 
+          
           //the comments below are for later to save the data 
           on_finish: function(){ //Execute this when the experiment finishes
             if(savingLocally){

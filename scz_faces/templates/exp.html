@@ -196,7 +196,10 @@
           start: 0,
           prompt: 'How confident are you in your choice?<br/>',
           data: function(){
+          	console.log('phase2Array[trialCounter]'); 
+          	console.log(phase2Array[trialCounter]); 
             return phase2Array[trialCounter].timeline[1].data;
+            
           },
           on_start: function(trial){
             confidence_on_start_function(trial);
@@ -235,12 +238,12 @@
         var timeline = [];
         
         //Push the trials into the timeline array
-        timeline.push(makeFullscreenBlock());
-        timeline.push(instructionsBlock1);
-  /*      timeline.push(phase1);
+      //  timeline.push(makeFullscreenBlock());
+      //  timeline.push(instructionsBlock1);
+       timeline.push(phase1);
         timeline.push(prepForPhase2);
-  */      timeline.push(instructionsBlock2);
-  //      timeline.push(loopNode);
+    //   timeline.push(instructionsBlock2);
+      timeline.push(loopNode);
         timeline.push(instructionsBlock3);
   //      timeline.push(surveyBlock);
         timeline.push(debriefBlock);

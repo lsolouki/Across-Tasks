@@ -24,26 +24,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 */
-
-//the following code adapts the RDK plugin to make 3 buttons as response options instead of keyboard clicks.
 		
-	//this is how you create a jspsych plugin 	
+		
 jsPsych.plugins["RDK"] = (function() {
 
 	var plugin = {};
 	
 	plugin.info = {
-	    name: "RDK", //name of plugin
-	    parameters: { //plugin parameters 
-	    
-	    	button_html: { //shouldn't call this i wanna use the default--leila
-	    	type: jsPsych.plugins.parameterType.STRING,
-        	pretty_name: 'Button HTML',
-       	 	default: '<button class="jspsych-btn">%choice%</button>',
-       	 	array: true,
-       	 	description: 'The html of the button. Can create own style.'
-      		},
-	    
+	    name: "RDK",
+	    parameters: {
 		    choices: {
 		      type: jsPsych.plugins.parameterType.INT,
 		      pretty_name: "Choices",
@@ -51,14 +40,13 @@ jsPsych.plugins["RDK"] = (function() {
 		      array: true,
 		      description: "The valid keys that the subject can press to indicate a response"
 		    },
-		    correct_choice: {   //have to adapt this for the new code, haven't done that yet 
-		      type: jsPsych.plugins.parameterType.INT,
+		    correct_choice: {
+		      type: jsPsych.plugins.parameterType.STRING,
 		      pretty_name: "Correct choice",
 		      default: undefined,
 		      array: true,
-		      description: "The correct button number"
+		      description: "The correct keys for that trial"
 		    },
-
 		    trial_duration: {
 		      type: jsPsych.plugins.parameterType.INT,
 		      pretty_name: "Trial duration",
@@ -272,8 +260,6 @@ jsPsych.plugins["RDK"] = (function() {
 		trial.border_color = assignParameterValue(trial.borderColor, "black");
 		
 		
-		
-		
 		//For square and circle, set the aperture height == aperture width
 		if (apertureType == 1 || apertureType == 3) {
 			trial.aperture_height = trial.aperture_width;
@@ -357,6 +343,8 @@ jsPsych.plugins["RDK"] = (function() {
 
 		//--------Set up Canvas begin-------
 		
+		
+		
 		//Create a canvas element and append it to the DOM
 		var canvas = document.createElement("canvas");
 		display_element.appendChild(canvas); 
@@ -382,7 +370,6 @@ jsPsych.plugins["RDK"] = (function() {
 
 		//Set the canvas background color
 		canvas.style.backgroundColor = backgroundColor;
-		canvas.style.position='relative'; 
 
 		//--------Set up Canvas end-------
 		
@@ -454,8 +441,8 @@ jsPsych.plugins["RDK"] = (function() {
 		//Declare a global timeout ID to be initialized below in animateDotMotion function and to be used in after_response function
 		var timeoutID;
 		
-		// Declare global variable to be defined in startKeyboardListener function and to be used in end_trial function
-// 		var keyboardListener; 
+		//Declare global variable to be defined in startKeyboardListener function and to be used in end_trial function
+		var keyboardListener; 
 		
 		//Declare global variable to store the frame rate of the trial
 		var frameRate = []; //How often the monitor refreshes, in ms. Currently an array to store all the intervals. Will be converted into a single number (the average) in end_trial function.
@@ -470,77 +457,6 @@ jsPsych.plugins["RDK"] = (function() {
 		//--------RDK variables and function calls end--------
 
 
-//---BUTTON PRESS VARIABLES BEGIN--// Leila added this part. copied this from the jspsych-html-button-response.js plugin 
-
-//display buttons
-	var html; 
-    var buttons = [];
-    if (Array.isArray(trial.button_html)) {
-      if (trial.button_html.length == trial.choices.length) {
-        buttons = trial.button_html;
-      } else {
-        console.error('Error in html-button-response plugin. The length of the button_html array does not equal the length of the choices array');
-      }
-    } else {
-      for (var i = 0; i < trial.choices.length; i++) {
-        buttons.push(trial.button_html);
-      }
-    }
-    html += '<div id="jspsych-html-button-response-btngroup">';
-    for (var i = 0; i < trial.choices.length; i++) {
-      var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-      
-      
-   //   html += '<div class="jspsych-html-button-response-button" style="position: absolute; display: block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+';" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
-	  html += '<div class="jspsych-html-button-response-button"  display: block;" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
-
-    }
-    html += '</div>';
-    
-    
-var button_display = document.createElement("button_display");
-display_element.appendChild(button_display); 
-  button_display.innerHTML = html;
-
-
-    for(var i=0; i<trial.choices.length; i++)
-    {
-    	var x=apertureCenterXArray[i]-(apertureWidthArray[i]/2); 
-      var y=apertureCenterYArray[i]-(apertureHeightArray[i]/2); 
-      document.getElementsByClassName('jspsych-html-button-response-button').style.position='relative'; 
-    	document.getElementById('jspsych-html-button-response-button-' + i).style.top=y; 
-    	document.getElementById('jspsych-html-button-response-button-' + i).style.left=x; 
-    
-    }
-
-
-
-
-
-
- // start time
-    var start_time = Date.now();
-// add event listeners to buttons
-    for (var i = 0; i < trial.choices.length; i++) {
-      display_element.querySelector('#jspsych-html-button-response-button-' + i).addEventListener('click', function(e){
-        var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
-        after_response(choice);
-      });
-    }
-    
-    
-    
-    
-    
-    
-    
- // store response
-    var response = {
-      rt: null,
-      button: null
-    };
-
-
 
 		//-------------------------------------
 		//-----------FUNCTIONS BEGIN-----------
@@ -548,39 +464,24 @@ display_element.appendChild(button_display);
 
 		//----JsPsych Functions Begin----
 		
-		    // function to handle responses by the subject
-    function after_response(choice) {
-
-      // measure rt
-      var end_time = Date.now();
-      var rt = end_time - start_time;
-      response.button = choice;
-      response.rt = rt;
-
-      // after a valid response, the stimulus will have the CSS class 'responded'
-      // which can be used to provide visual feedback that a response was recorded
-     // display_element.querySelector('#jspsych-html-button-response-stimulus').className += ' responded';
-
-      // disable all the buttons after a response
-      var btns = document.querySelectorAll('.jspsych-html-button-response-button button');
-      for(var i=0; i<btns.length; i++){
-        //btns[i].removeEventListener('click');
-        btns[i].setAttribute('disabled', 'disabled');
-      }
-      
-      //Kill the timeout if the subject has responded within the time given
-			window.clearTimeout(timeoutID);
-
-      if (trial.response_ends_trial) {
-        end_trial();
-      }
-    };
 		
+		//Function to start the keyboard listener
+		function startKeyboardListener(){
+			//Start the response listener if there are choices for keys
+			if (trial.choices != jsPsych.NO_KEYS) {
+				//Create the keyboard listener to listen for subjects' key response
+				keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
+					callback_function: after_response, //Function to call once the subject presses a valid key
+					valid_responses: trial.choices, //The keys that will be considered a valid response and cause the callback function to be called
+					rt_method: 'performance', //The type of method to record timing information. 'performance' is not yet supported by all browsers, but it is supported by Chrome. Alternative is 'date', but 'performance' is more precise.
+					persist: false, //If set to false, keyboard listener will only trigger the first time a valid key is pressed. If set to true, it has to be explicitly cancelled by the cancelKeyboardResponse plugin API.
+					allow_held_key: false //Only register the key once, after this getKeyboardResponse function is called. (Check JsPsych docs for better info under 'jsPsych.pluginAPI.getKeyboardResponse').
+				});
+			}
+		}
 
 		//Function to end the trial proper
 		function end_trial() {
-			  // kill any remaining setTimeout handlers
-      jsPsych.pluginAPI.clearAllTimeouts(); //not sure if this is necessary
 			
 			//Stop the dot motion animation
 			stopDotMotion = true;
@@ -598,10 +499,15 @@ display_element.appendChild(button_display);
 				frameRate = 0; //Set to zero if the subject presses an answer before a frame is shown (i.e. if frameRate is an empty array)
 			}
 
+			//Kill the keyboard listener if keyboardListener has been defined
+			if (typeof keyboardListener !== 'undefined') {
+				jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
+			}
+
 			//Place all the data to be saved from this trial in one data object
 			var trial_data = { 
 				"rt": response.rt, //The response time
-				"button_pressed": response.button,
+				"key_press": response.key, //The key that the subject pressed
 				"correct": correctOrNot(), //If the subject response was correct
 				"choices": trial.choices, //The set of valid keys
 				"correct_choice": trial.correct_choice, //The correct choice
@@ -651,8 +557,26 @@ display_element.appendChild(button_display);
 			jsPsych.finishTrial(trial_data);
 			
 		} //End of end_trial
+
+		//Function to record the first response by the subject
+		function after_response(info) {
+			
+			//Kill the timeout if the subject has responded within the time given
+			window.clearTimeout(timeoutID);
+
+			//If the response has not been recorded, record it
+			if (response.key == -1) {
+				response = info; //Replace the response object created above
+			}
+
+			//If the parameter is set such that the response ends the trial, then end the trial
+			if (trial.response_ends_trial) {
+				end_trial();
+			}
+
+		}; //End of after_response
 		
-		//Function that determines if the response is correct   //haven't adapted this for the current experiment. need to do that 
+		//Function that determines if the response is correct
 		function correctOrNot(){
 						
 			//Check that the correct_choice has been defined
@@ -660,12 +584,12 @@ display_element.appendChild(button_display);
 				//Check if the correct_choice variable holds an array
 				if(trial.correct_choice.constructor === Array){ //If it is an array
 					trial.correct_choice = trial.correct_choice.map(function(x){return x.toUpperCase();}); //Convert all the values to upper case
-					return trial.correct_choice.includes(response.button); //If the response is included in the correct_choice array, return true. Else, return false.
+					return trial.correct_choice.includes(String.fromCharCode(response.key)); //If the response is included in the correct_choice array, return true. Else, return false.
 				}
 				//Else compare the char with the response key
 				else{
 					//Return true if the user's response matches the correct answer. Return false otherwise.
-					return response.button == trial.correct_choice;
+					return response.key == trial.correct_choice.toUpperCase().charCodeAt(0);
 				}
 			}
 		}
@@ -1001,12 +925,7 @@ display_element.appendChild(button_display);
 		      ctx.fillStyle = fixationCrossColor;
 		      ctx.stroke();
 		    }
-      		
-      		
-      		
-      		
-      		
-      		
+      
 	      	//Draw the border if we want it
 	      	if(border === true){
 	        
@@ -1325,6 +1244,8 @@ display_element.appendChild(button_display);
 			//frameRequestID saves a long integer that is the ID of this frame request. The ID is then used to terminate the request below.
 			var frameRequestID = window.requestAnimationFrame(animate);
 			
+			//Start to listen to subject's key responses
+			startKeyboardListener(); 
 									
 			//Delare a timestamp
 			var previousTimestamp;
@@ -1338,7 +1259,7 @@ display_element.appendChild(button_display);
 				else {
 					frameRequestID = window.requestAnimationFrame(animate); //Calls for another frame request
 					
-					//If the timer has not been fed and it is set, then start the timer
+					//If the timer has not been started and it is set, then start the timer
 					if ( (!timerHasStarted) && (trial.trial_duration > 0) ){
 						//If the trial duration is set, then set a timer to count down and call the end_trial function when the time is up
 						//(If the subject did not press a valid keyboard response within the trial duration, then this will end the trial)

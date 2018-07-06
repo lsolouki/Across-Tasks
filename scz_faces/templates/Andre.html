@@ -1,9 +1,13 @@
 
+<>
+
+
+
 <!DOCTYPE html>
 <html>
     <head>
         <!--Change the title-->
-        <title>Edit Siva</title>
+        <title>Experiment</title>
         
         <!--jsPsych necessities start-->
         <script src="../static/js/jsPsych-6.0.1/jspsych.js"></script>
@@ -11,7 +15,6 @@
         <!--jsPsych necessities end-->
         
         <!--jsPsych plugins start-->
-        <script src="../static/js/jsPsych-6.0.1/plugins/jspsych-RDK.js"></script>
         <script src="../static/js/jsPsych-6.0.1/plugins/jspsych-image-slider-response.js"></script>
         <script src="../static/js/jsPsych-6.0.1/plugins/jspsych-html-slider-response.js"></script>
         <script src="../static/js/jsPsych-6.0.1/plugins/jspsych-survey-multi-choice.js"></script>
@@ -23,11 +26,10 @@
         <!--jsPsych plugins end-->
         
         <!--PsiTurk inserts start-->
-        
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="../static/lib/underscore-min.js" type="text/javascript"> </script> 
-        <script src="../static/lib/backbone-min.js" type="text/javascript"> </script> 
-       <!-- <script src="../static/lib/d3.v3.min.js" type="text/javascript"> </script> TURN THIS ON LATER--LEILA -->
+        <script src="../static/lib/underscore-min.js" type="text/javascript"> </script>
+        <script src="../static/lib/backbone-min.js" type="text/javascript"> </script>
+      <!--  <script src="../static/lib/d3.v3.min.js" type="text/javascript"> </script>-->
         <!-- These variables are necessary to implement psiTurk -->
         <script type="text/javascript">
             // These fields provided by the psiTurk Server
@@ -37,7 +39,7 @@
         </script>
         <!-- utils.js and psiturk.js provide the basic psiturk functionality -->
         <script src="../static/js/utils.js" type="text/javascript"></script>
-        <!--<script src="../static/js/psiturk.js" type="text/javascript"></script> TURN THIS ON LATER--LEILA --> 
+        <!--<script src="../static/js/psiturk.js" type="text/javascript"></script>-->
         <!--PsiTurk inserts end-->
         <!--Include the faces for animation-->
         <script src="animationImages.js"></script>
@@ -84,8 +86,9 @@
         //Parameters
         //nTrials2AFC = 104; //Must be multiple of 4 for counterbalancing gender & PE
         nTrials3AFC = 208; //Must be multiple of 8 for counterbalancing gender, PE & norm
-        nFacesPerGender = 12; //How many faces to keep from each gender for the AFC trials
-        
+        nFacesPerGender = 3; //How many faces to keep from each gender for the AFC trials
+        nTargets=2;
+        nNontargets=1; 
         
         //Global variables to be filled in by functions below
         var AFC2Array = [];   //Array to hold the 2AFC Trials
@@ -127,7 +130,7 @@
 
         //The array of female stumuli
         var male_stimuli = [
-         //  {path: '../static/images/male/AM01NES.JPG'},
+          // {path: '../static/images/male/AM01NES.JPG'},
 //           {path: '../static/images/male/AM02NES.JPG'},
 //           {path: '../static/images/male/AM03NES.JPG'},
 //           {path: '../static/images/male/AM04NES.JPG'},
@@ -159,8 +162,8 @@
         //Make the first phase
         var phase1 = makePhase1(); 
         
-        //Prep for second phase (calculate mean, sd, z-scores, etc.)
-        var prepForPhase2 = makePrepForPhase2();//AFC2Array and AFC3Array are made here
+        //Prep for second phase (calc the rankings)
+        var prepForPhase2 = makePrepForPhase21();//AFC2Array and AFC3Array are made here
         
         //Make the instructions for phase 2
         var instructionsBlock2 = makeInstructions2();
@@ -234,14 +237,14 @@
         
         //Push the trials into the timeline array
        // timeline.push(makeFullscreenBlock());
-     //   timeline.push(instructionsBlock1);
-       timeline.push(phase1);
+        //timeline.push(instructionsBlock1);
+        timeline.push(phase1);
         timeline.push(prepForPhase2);
-     //  timeline.push(instructionsBlock2);
-  //      timeline.push(loopNode);
+     // timeline.push(instructionsBlock2);
+       timeline.push(loopNode);
        // timeline.push(instructionsBlock3);
   //      timeline.push(surveyBlock);
-       // timeline.push(debriefBlock);
+        //timeline.push(debriefBlock);
         
         
         //==================================
@@ -609,7 +612,6 @@
           return {
             type: 'call-function',
             func: function(){
-            
               
               //Loop twice: once for male, and once for female
               for(var j = 0; j < 2; j++){
@@ -630,14 +632,10 @@
                 console.log("relevantArray sorted by differenceRating:");
                 console.log(JSON.parse(JSON.stringify(relevantArray)));
                 
+                console.log('relevant array leila wants to see');
+                console.log(relevantArray);
                 //Calculate rankings and sort the array based on averageRating
                 calculateRankings(relevantArray);
-                console.log('size of rel array'); 
-                console.log(relevantArray.length);
-                console.log('rankings'); 
-                for(i=0; i<relevantArray.length; i++)
-                	console.log(relevantArray[i].rank); 
-                
               
                 //Calculate the mean and SD and update the stimuli array with them
                 calculateMeanAndSD(relevantArray);
@@ -667,6 +665,123 @@
             
           }//End of return object
         }//End of makePrepForPhase2
+        
+        
+        function makePrepForPhase21() {
+         return {
+            type: 'call-function',
+            func: function(){
+            
+             //Loop twice: once for male, and once for female
+              for(var j = 0; j < 2; j++){
+                
+                //If first iteration, then use the male stimuli array
+                if(j === 0){
+                  var relevantArray = male_stimuli;
+                }
+                //If second iteration, then use the female stimuli array
+                else if(j === 1){
+                  var relevantArray = female_stimuli;
+                }
+                
+                truncateArray(relevantArray);
+                
+                 //Print out the array to see it
+                console.log("relevantArray sorted by differenceRating:");
+                console.log(JSON.parse(JSON.stringify(relevantArray)));
+                
+                // console.log('relevant array leila wants to see');
+//                 console.log(relevantArray);
+                //Calculate rankings and sort the array based on averageRating
+                calculateRankings(relevantArray);
+                combos= makeTargetsAndNontargetsAndCombos(relevantArray); 
+                ThreeAFC_trials=make_3AFCtrials2(combos); 
+                //make3AFCTrials();// i need to change the 3AFC trials to fit what i want              
+                //phase2Array = jsPsych.randomization.shuffle(AFC3Array);
+        		phase2Array = jsPsych.randomization.shuffle(ThreeAFC_trials);
+
+      		  }//end of for loop
+        }//end of func
+        }//end of return
+        }//end of make prep for phase 2
+        
+        
+        function make_3AFCtrials2(combos)
+		{
+			var trials=[];
+			for(var i=0; i<combos.length; i++)
+			{
+				trials=trials.concat(makeTrialFromTriplet2(combos[i]));  
+			}
+			return trials; 
+		}
+        
+        
+        
+        //function to make the targets and the nontargets
+        function makeTargetsAndNontargetsAndCombos(relevantArray){
+        	targets=[]; //global variable
+        	nontargets=[]; //global variable
+        
+         for(var i = 0; i < relevantArray.length; i++){
+        	if(relevantArray[i].rank<=nTargets) ///the top five will be targets
+        		targets.push(relevantArray[i]); 
+        	else 
+        		nontargets.push(relevantArray[i]);
+			//here maybe i can call the make all combos thing :) :) 
+ 
+ 
+        	}//end of for loop
+        var combos=make_all_combos(targets,nontargets); 
+        return combos; 
+        console.log('combos');
+        console.log(combos); 
+        
+        }//end of maketargetsandnontargetsfxn
+        
+        //this function takes the targets and nontargets and makes all possible combos of 2 targets and one nontarget 
+		function make_all_combos(targets, nontargets) //make all combos doesn't work with phase 2 script, so fix that. 
+		{
+
+			
+			var result=[]; 
+			var pairs=[]; 
+			for (var i=0; i<targets.length-1; i++)
+			{	
+			for(var j=i+1;j<targets.length; j++)
+			{
+				var mini=[]; 
+				mini.push(targets[i]); 
+				mini.push(targets[j]); 
+				pairs.push(mini); 
+			}
+			}
+
+			
+			for(var i=0; i<pairs.length; i++)
+			{
+				var a=pairs[i][0];
+				var b=pairs[i][1];
+			
+				for(var j=0; j<nontargets.length; j++)
+				{
+					var c=nontargets[j]; 
+					var mini2=[];  
+					mini2.push(a); 
+					mini2.push(b); 
+					mini2.push(c);
+					mini2 = jsPsych.randomization.repeat(mini2, 1); 
+					result.push(mini2); 
+					return result; // remove line!!!
+				}
+			}
+			return result;  
+		} 
+        
+        
+        
+        
+        
         
         
         //Function to take out the faces with the largest rating differences
@@ -832,11 +947,15 @@
             
         }//End of make2AFCTrials
         
+    
+        
+        
         //Function to make 3AFC trials
         function make3AFCTrials(){
           
           //The array to hold all the 3AFC trials
           AFC3Array = []; //Global variable
+          
           
           //For loop that generates the trials
           for(var i = 0; i < nTrials3AFC/8; i++){
@@ -899,7 +1018,7 @@
           console.log("AFC3Array: ");
           console.log(JSON.parse(JSON.stringify(AFC3Array)));
           
-        }//End off make3AFCTrials
+        }//End of make3AFCTrials
         
         //Function to sample a number of face objects from a PEArray and checks their z-score are all different
         function sampleFrom(relevantArray, n){
@@ -970,6 +1089,18 @@
           return '<img src=' + path + ` style="width:${imageWidth}px; height:auto;">`;
         
         }//End of makeImageHTML
+        
+        //Function to make the targets and the nontargets
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         //Function to make the PE Arrays
         function makePEArray(relevantArray, highOrLow){
@@ -1181,6 +1312,97 @@
           
         }//End of makeTrialFromTriplet
         
+        
+        
+        
+        //Function to make a trial from the triplet
+        function makeTrialFromTriplet2(triplet){
+          
+          //Sort the triplet of faces based on the z-score (start of array is highest score)
+          triplet = triplet.sort(function(a,b){return (b.rank - a.rank); });
+          
+          //Tag the faces
+          triplet[0].faceType = "target";
+          triplet[1].faceType = "non-target";
+          triplet[2].faceType = "distractor";
+          
+        
+          //Shuffle the triplet to randomize the faces
+          var shuffledTriplet = jsPsych.randomization.shuffle(triplet);
+          
+          //Load in the faces for easy handling
+          var face1 = shuffledTriplet[0];
+          var face2 = shuffledTriplet[1];
+          var face3 = shuffledTriplet[2];
+          
+          //Make the choice trial object
+          var choiceTrial = {
+            type: 'html-button-response',
+            stimulus: '',
+            prompt: '<p> Which face is most attractive? </p>',
+            choices: [
+              makeImageHTML(face1.path),
+              makeImageHTML(face2.path),
+              makeImageHTML(face3.path)
+            ],
+            //The data that is included in the trial
+            data: {
+              //Log in the general trial data
+             // trialType: "3AFC",
+              gender: face1.gender,
+              //Face 1 data
+              faceNumber1:face1.faceNumber,
+              faceType1: face1.faceType,
+              //Face 2 data
+              faceNumber2:face2.faceNumber,
+              faceType2: face2.faceType,
+              //Face 3 data
+              faceNumber3:face3.faceNumber,
+              faceType3: face3.faceType
+            }
+          };//End of choiceTrial
+          
+          //Make the confidence trial object
+          var confidenceTrial = {
+            type: 'html-slider-response',
+            stimulus: '',
+            labels: ['Extremely unconfident','Extremely confident'],
+            start: 0,
+            prompt: 'How confident are you in your choice?',
+            data: {
+              trialType: "3AFC Confidence",
+              //PE: PE
+            },
+            on_start: function(trial){
+              //Get the data object from the last trial (the 3AFC trial)
+              var data = jsPsych.data.get().last(1);
+              //Get the chosen number from the data object
+              var chosenFace = data.chosenFace;
+              //Add that information to this trial's data
+              trial.data.chosenFace = chosenFace;
+            },
+            on_finish: function(data){
+              //Get the data object from the last two trials
+              var lastTwoDataObjects = jsPsych.data.get().last(2)[0];
+              //Get the data of the second last one (the one from the choice trial)
+              var choiceTrial = lastTwoDataObjects[0];
+              //Add in the response of this trial to it
+              choiceTrial.response = data.response;
+            }
+          };//End of confidenceTrial
+          
+          
+          //Make a trial object and return it
+          return {
+            type:'html-button-response', //This will be overridden by those of the trial
+           // timeline: [choiceTrial,confidenceTrial]
+            timeline: [choiceTrial]
+          };
+          
+        }//End of makeTrialFromTriplet
+        
+
+        
         //Function to add the data to the final iteration
         function addDataToTrial(data){
           
@@ -1323,8 +1545,8 @@
                 if(currentResponse === "Yes"){
                   PDICounter++;
                 }
-              }//End of for loop
-              
+              }//End of for 
+                            
               //Add the counter data to the data object
               data.PDIScore = PDICounter;
               
