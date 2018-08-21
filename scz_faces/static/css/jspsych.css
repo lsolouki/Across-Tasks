@@ -20,6 +20,10 @@ html {
  line-height: 1.6em;
 }
 
+div {
+	text-align: 'center'
+}
+
 p {
     clear:both;
 }
@@ -68,6 +72,9 @@ input[type="text"] {
     font-family: 'Open Sans', 'Arial', sans-sefif;
     font-size: 14px;
 }
+
+
+
 
 button {
     padding: 0.5em;

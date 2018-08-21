@@ -1,4 +1,16 @@
-var phase1AnimationArray = [
+var RDKanimationArray = [
+
+
+
+
+];
+
+var lineCoherenceAnimationArray = [
+
+];
+
+
+var facePhase1AnimationArray = [
 	'../static/images/animationImages/fa_1.png',
 	'../static/images/animationImages/fa_1.png',
 	'../static/images/animationImages/fa_1.png',
@@ -56,7 +68,7 @@ var phase1AnimationArray = [
 	'../static/images/animationImages/fu_11.png'
 ];
 
-var phase2AnimationArray = [
+var facePhase2AnimationArray = [
 	'../static/images/animationImages/m3_1.png',
 	'../static/images/animationImages/m3_2.png',
 	'../static/images/animationImages/m3_3.png',
