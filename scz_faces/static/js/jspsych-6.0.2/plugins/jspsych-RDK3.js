@@ -142,13 +142,13 @@ jsPsych.plugins["RDK"] = (function() {
 		    dot_color: {
 		      type: jsPsych.plugins.parameterType.STRING,
 		      pretty_name: "Dot color",
-		      default: "white",
+		      default: "gray",
 		      description: "The color of the dots"
 		    },
 		    background_color: {
 		      type: jsPsych.plugins.parameterType.STRING,
 		      pretty_name: "Background color",
-		      default: "gray",
+		      default: "white",
 		      description: "The background of the stimulus"
 		    },
 		    RDK_type: {
@@ -363,7 +363,8 @@ jsPsych.plugins["RDK"] = (function() {
 
 		var promptText=document.createElement("div");
 		promptText.setAttribute('id','textPrompt');
-		promptText.innerHTML="Click on the aperture in which the greatest proportion of dots are moving towards the right";
+		promptText.setAttribute('font-size', '28px');
+		promptText.innerHTML="<p style='font-size:28px'> Click on the aperture in which the greatest proportion of dots are moving towards the right</p>";
 
 
 		//--------Set up Canvas begin-------
@@ -391,7 +392,7 @@ jsPsych.plugins["RDK"] = (function() {
 
 		//Declare variables for width and height, and also set the canvas width and height to the window width and height
 		var canvasWidth = canvas.width = window.innerWidth;
-		var canvasHeight = canvas.height = window.innerHeight;
+		var canvasHeight = canvas.height = window.innerHeight*0.95;
 
 		//Set the canvas background color
 		canvas.style.backgroundColor = backgroundColor;
