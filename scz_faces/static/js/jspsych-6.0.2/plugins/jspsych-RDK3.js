@@ -392,7 +392,7 @@ jsPsych.plugins["RDK"] = (function() {
 
 		//Declare variables for width and height, and also set the canvas width and height to the window width and height
 		var canvasWidth = canvas.width = window.innerWidth;
-		var canvasHeight = canvas.height = window.innerHeight*0.95;
+		var canvasHeight = canvas.height = window.innerHeight-110;
 
 		//Set the canvas background color
 		canvas.style.backgroundColor = backgroundColor;
